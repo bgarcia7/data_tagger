@@ -42,12 +42,11 @@ function highlightSelection() {
 }
 
 function addLabel(text){
-    if(text=="" || labels.length==0) return;
+    if(text=="") return;
     var label = getCurrentLabel();
 
     if(!labelDict[label]){
-        labelDict[label] = new Array(1);
-        labelDict[label].push(text);
+        labelDict[label] = new Array(text);
     } else {
         labelDict[label].push(text);
     }
@@ -60,7 +59,7 @@ function disableButton(){
 }
 
 function addLabelButton(label, color){
-    
+
     colors[label] = color;    
     var button = document.createElement("button"); 
 
@@ -80,6 +79,16 @@ function addLabelButton(label, color){
     parent.append(button);
 }
 
+function appendNewLabel() {
+    var new_label = $("#new_label_label").val();
+    var color = $("#color_picker").val();
+    if(new_label){
+    labels.push(new_label);
+        $("#new_label_label").val('');
+        addLabelButton(new_label, color);
+    }
+}
+
 $(document).ready(function(){
 	labelDict = {};
     labels = [];
@@ -90,20 +99,26 @@ $(document).ready(function(){
 	})
 
     $("#add_label").on("click",function(){
-        var new_label = $("#new_label_label").val();
-        var color = $("#color_picker").val();
-        if(new_label){
-            labels.push(new_label);
-            $("#new_label_label").val('');
-            addLabelButton(new_label, color);
-        }
+        appendNewLabel();
     })
 
 
     $(document).keypress(function(e) {
-        if (e.which == 97) { /* pressed a */
+        if (e.which == 97 && $(".active").length > 0 && !$("#search_bar").is(":focus") && !$("#new_label_label").is(":focus")) { // pressed a
+
+            //adds text that is highlighted through search bar
+            if($(".highlight").length > 0){
+                var text = document.getElementsByClassName("highlight")[0].innerHTML;
+                $("#text_area").removeHighlight();
+                $("#text_area").highlight(false, text,colors[getCurrentLabel()]);
+                addLabel(text);
+                $("#search_bar").val('');
+            }
+            //adds text that is manually selected by the user
             addLabel(highlightSelection());
-        } 
+        } else if (e.which == 13 && $("#new_label_label").is(":focus")) {
+            appendNewLabel();
+        }
     });
 
     $("#edit_box").change(function() {
@@ -112,6 +127,20 @@ $(document).ready(function(){
         } else {
             $("#text_area").attr('contenteditable','false');
         }
+    });
+
+    $("#edit_labels").change(function(){
+        if(this.checked) {
+            $("#tagged_data").attr('contenteditable','true');
+        } else {
+            $("#tagged_data").attr('contenteditable','false');
+        }
+    })
+
+    $("#search_bar").keyup(function (e) {
+        $("#text_area").removeHighlight();
+        var text = $("#search_bar").val();
+        $("#text_area").highlight(true, text,"#B1D7FE");
     });
 
 });
