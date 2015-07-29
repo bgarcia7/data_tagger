@@ -1,0 +1,54 @@
+.container_labels{
+	margin:50px 0px 10px;
+	font-size:24px;
+}
+.content_container{
+	height:350px;
+   	overflow:auto;
+   	border:1px solid black;
+    background:#fff;
+    padding:10px;
+}
+
+.label_container{
+	height:350px;
+   	overflow:auto;
+}
+
+.color{
+	background-color:blue;
+	font-weight:bold;
+}
+
+.label_button{
+	display:block;
+	margin:auto;
+	margin-bottom:10px;
+	width:80%;
+	background-color:#ffffff;
+}
+
+.active{
+	background-color:#eeeeee;
+}
+
+#add_label{
+	margin-top:-1px;
+	height:35px;
+	width:35px;
+}
+
+
+#color_picker{
+	height:35px;
+	margin-top:19px;
+}
+
+.add_label_container{
+	margin-top:20px;
+}
+
+.nav div{
+	margin-top:10px;
+	margin-left:20%;
+}
