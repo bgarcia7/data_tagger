@@ -19,9 +19,10 @@ function getCurrentLabel(){
 
 function highlightSelection() {
     var range, text;
-    var color= colors[getCurrentLabel()];
+    var label = getCurrentLabel();
+    var color= colors[label];
     var text = getSelectionText();
-    var html = "<span style=\"background-color:"+color+"\">"+text+"</span>";
+    var html =  "<span style=\"color:"+color+"\">&lt;"+label+"&gt;</span>"+text+"<span style=\"color:"+color+"\">&lt;\/"+label+"&gt;</span>";
 
     if (window.getSelection()!=0 && window.getSelection().getRangeAt(0)) {
         range = window.getSelection().getRangeAt(0);
@@ -89,10 +90,29 @@ function appendNewLabel() {
     }
 }
 
+function readFiles(files){
+    console.log("in read Files");
+    console.log(typeof files);
+    if (typeof files != "undefined"){
+        console.log("Files are not undefined");
+        var reader = new FileReader();
+        for (var i= 0, l=files.length; i < l; i++){
+            console.log("in for loop");
+            reader.onload = function (e) {
+                console.log("reader loaded");
+                output = e.target.result;
+                console.log("output is" + output);
+                $("#text_area").html(output);
+            }
+        }        
+    }
+}
+
 $(document).ready(function(){
 	labelDict = {};
     labels = [];
     colors = {};
+    cleanText = $("text_area").text();
 
 	$("#get_text").on("click",function(){
         addLabel(highlightSelection());
@@ -105,9 +125,15 @@ $(document).ready(function(){
 
     $(document).keypress(function(e) {
         if (e.which == 97 && $(".active").length > 0 && !$("#search_bar").is(":focus") && !$("#new_label_label").is(":focus")) { // pressed a
+            
+            //Makes sure div cannot be editted
+            if($("#edit_box").is(":checked") && getSelectionText()!=''){
+                alert("Please uncheck the edit box before starting to label data!");
+                e.preventDefault();
+                return;
 
-            //adds text that is highlighted through search bar
-            if($(".highlight").length > 0){
+            } else if($(".highlight").length > 0){
+                //adds text that is highlighted through search bar
                 var text = document.getElementsByClassName("highlight")[0].innerHTML;
                 $("#text_area").removeHighlight();
                 $("#text_area").highlight(false, text,colors[getCurrentLabel()]);
@@ -141,6 +167,14 @@ $(document).ready(function(){
         $("#text_area").removeHighlight();
         var text = $("#search_bar").val();
         $("#text_area").highlight(true, text,"#B1D7FE");
+    });
+
+    $("#text_file").on("change",function(){
+        if (window.File && window.FileReader && window.FileList && window.Blob) {
+            readFiles($(this)[0].files);
+        } else {
+            alert('The File APIs are not fully supported in this browser.');
+        }
     });
 
 });
