@@ -136,7 +136,7 @@ $(document).ready(function(){
                 //adds text that is highlighted through search bar
                 var text = document.getElementsByClassName("highlight")[0].innerHTML;
                 $("#text_area").removeHighlight();
-                $("#text_area").highlight(false, text,colors[getCurrentLabel()]);
+                $("#text_area").highlight(false, text,colors[getCurrentLabel()], getCurrentLabel());
                 addLabel(text);
                 $("#search_bar").val('');
             }

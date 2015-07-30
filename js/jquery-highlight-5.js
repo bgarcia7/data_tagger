@@ -14,7 +14,7 @@ Johann Burkard
 
 */
 
-jQuery.fn.highlight = function(highlight, pat, color) {
+jQuery.fn.highlight = function(highlight, pat, color, label) {
  function innerHighlight(node, pat) {
   var skip = 0;
   if (node.nodeType == 3) {
@@ -22,13 +22,19 @@ jQuery.fn.highlight = function(highlight, pat, color) {
    pos -= (node.data.substr(0, pos).toUpperCase().length - node.data.substr(0, pos).length);
    if (pos >= 0) {
     var spannode = document.createElement('span');
-    spannode.style.backgroundColor = color;
-    if(highlight) spannode.className = "highlight";
     var middlebit = node.splitText(pos);
     var endbit = middlebit.splitText(pat.length);
     var middleclone = middlebit.cloneNode(true);
-    spannode.appendChild(middleclone);
-    middlebit.parentNode.replaceChild(spannode, middlebit);
+    if(highlight){
+      spannode.style.backgroundColor = color;
+      spannode.className = "highlight";
+      spannode.appendChild(middleclone);
+      middlebit.parentNode.replaceChild(spannode, middlebit)
+    } else {
+      var text = middleclone.nodeValue;
+      spannode.innerHTML = "<span style=\"color:"+color+"\">&lt;"+label+"&gt;</span>"+text+"<span style=\"color:"+color+"\">&lt;\/"+label+"&gt;</span>";
+      middlebit.parentNode.replaceChild(spannode, middlebit);
+    }
     skip = 1;
    }
   }
