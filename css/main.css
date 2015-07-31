@@ -1,40 +1,57 @@
 .container_labels{
-	margin:50px 0px 10px;
+	margin:20px 0px 10px;
 	font-size:24px;
 }
+
+.container_labels div{
+	height:40px;
+
+}
+
 .content_container{
 	height:350px;
    	overflow:auto;
    	border:1px solid black;
     background:#fff;
     padding:10px;
+    margin-top:10px;
 }
 
 .label_container{
+	margin-top:10px;
 	height:350px;
    	overflow:auto;
+   	margin-left:auto;
 }
 
 .color{
 	background-color:blue;
-	font-weight:bold;
+	font-weight:bold;}
+
+
+.userButtonFile{
+	overflow:hidden;
+	width:100%;
+	margin-bottom:20px;
 }
 
-.label_button{
-	display:block;
-	overflow-x:hidden;
-	margin:auto;
-	margin-bottom:10px;
-	width:80%;
-	background-color:#ffffff;
+.userButton{
+	overflow:hidden;
+	width:100%;
+	margin-bottom:20px;
 }
 
-.active{
+.labelActive{
+	background-color:#eeeeee;
+}
+
+.fileActive{
 	background-color:#eeeeee;
 }
 
 #add_label{
-	margin-top:-1px;
+	margin-top:-1;
+	padding:auto;
 	height:35px;
 	width:35px;
 }
@@ -65,3 +82,44 @@
 #edit_label_container{
 	margin-top:20px;
 }
+
+#edit_text_container{
+	margin-top:20px;
+}
+
+#file_name{
+	overflow-x:hidden;
+}
+
+#text_files{
+	position:absolute;
+	top:-1000px;
+}
+
+#upload_files{
+	color:white;
+	font-weight:bold;
+}
+
+#current_label{
+	font-weight:bold;
+	text-align:center;
+	overflow:scroll;
+	overflow-y:scroll;
+}
+
+#label_plus{
+	margin-top:-20%;
+	margin-left:-20%;
+}
+
+.title{
+	margin-top:20px;
+	font-size:36px;
+}
+
+#copy{
+	float:right;
+}
+
+
