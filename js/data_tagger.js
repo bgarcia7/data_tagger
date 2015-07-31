@@ -80,18 +80,11 @@ function highlightSelection() {
 function addTag(text){
     if(text=="") return;
     var label = getCurrentLabel();
-
-    //Checks to see if the label has been added to the dictionary, if not 
-    //makes a new array. If so, just pushes it.
-    // if(!labelDict[label]){
-    //     labelDict[label] = new Array(text);
-    // } else {
-    //     labelDict[label].push(text);
-    // }
-    // $("#tagged_data").html(JSON.stringify(labelDict));
     
     var filename = $(".fileActive").attr("id");
     var jsonString = fileList[filename][fileIndex.JSON];
+    
+    //initializes dictionary if it doesn't already exist
     var dict = {};
     if(!jsonString=='') dict = JSON.parse(jsonString);
     if(!dict[label]){
@@ -120,7 +113,7 @@ function addLabelButton(label, color){
     //Assign different attributes to the button. 
     button.setAttribute("class", "btn btn-default userButton");
     button.setAttribute("id", label);
-    button.setAttribute("title",label);
+    button.setAttribute("data-original-title",label);
     button.style.backgroundColor = color;
     button.style.color= "white";
     button.style.fontWeight= "bold";
@@ -177,7 +170,7 @@ function addFileButton(name){
     //Assign different attributes to the button. 
     button.setAttribute("class", "btn btn-default userButtonFile");
     button.setAttribute("id", name);
-    button.setAttribute("title",name);
+    button.setAttribute("data-original-title",name);
     button.setAttribute("data-toggle","tooltip");
     button.innerHTML = name;
 
@@ -190,6 +183,12 @@ function addFileButton(name){
     
     //Append the button to div (in span). 
     parent.append(button);
+
+    //sets tooltips to display full filenames when file buttons are hovered over
+    $('[data-toggle="tooltip"]').tooltip({
+        animated: 'fade',
+        placement: 'bottom',
+    }); 
 }
 
 
@@ -252,7 +251,7 @@ function setupReader(file, display) {
 
 /*###################################################################*/
 /*###################################################################*/
-/*############## Document onload initializations#####################*/
+/*############## Document onload initializations ####################*/
 /*###################################################################*/
 /*###################################################################*/
 
@@ -274,12 +273,6 @@ $(document).ready(function(){
     displayFile(defaultFileName);
    
     //===============[ File Initializations  ]===============
-
-    //sets tooltips to display full filenames when file buttons are hovered over
-    $('[data-toggle="tooltip"]').tooltip({
-        animated: 'fade',
-        placement: 'bottom',
-    }); 
 
     //Called when the file input is triggered. Uploads files.
     $("#text_files").on("change",function(e){
