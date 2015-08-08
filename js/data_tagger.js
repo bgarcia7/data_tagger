@@ -1,4 +1,5 @@
 /*###################################################################
+
 File: data_tagger.js
 Vocabulary:
     • 'Tag': refers to an identification given to a string of words
@@ -82,7 +83,7 @@ function addTag(text){
     var label = getCurrentLabel();
     
     var filename = $(".fileActive").attr("id");
-    var jsonString = fileList[filename][fileIndex.JSON];
+    var jsonString = fileList[filename]['json'];
     
     //initializes dictionary if it doesn't already exist
     var dict = {};
@@ -92,7 +93,7 @@ function addTag(text){
     } else {
         dict[label].push(text);
     }
-    fileList[filename][fileIndex.JSON] = JSON.stringify(dict);
+    fileList[filename]['json'] = JSON.stringify(dict);
     $("#tagged_data").html(JSON.stringify(dict));
 }
 
@@ -153,14 +154,6 @@ function appendNewLabel() {
 /*###################################################################*/
 
 
-//=====[ Used to enumerate through the various fields for each file in fileList  ]=====
-var fileIndex = {
-    CLEAN: 0,
-    TAGGED: 1,
-    HTML: 2,
-    JSON: 3,
-}
-
 //=====[ Adds a new button corresponding to a given file. Allows  ]=====
 //=====[ the user to switch between text files  ]=====
 function addFileButton(name){
@@ -191,15 +184,18 @@ function addFileButton(name){
     }); 
 }
 
+// =====[ Saves the state of the active File ]=====
+function saveActiveFile(){
+    (fileList[$(".fileActive").attr("id")])['labeled_text'] = $("#text_area").text();
+    (fileList[$(".fileActive").attr("id")])['html'] = $("#text_area").html();
+    (fileList[$(".fileActive").attr("id")])['json'] = $("#tagged_data").html();
+}
 
 //=====[ Displays the file corresponding to the given filename in the text data div  ]=====
 function displayFile(fileName){
     //Saves edits made to the active file
     if(fileActive){
-        (fileList[$(".fileActive").attr("id")])[fileIndex.TAGGED] = $("#text_area").text();
-        console.log($("#text_area").text());
-        (fileList[$(".fileActive").attr("id")])[fileIndex.HTML] = $("#text_area").html();
-        (fileList[$(".fileActive").attr("id")])[fileIndex.JSON] = $("#tagged_data").html();
+        saveActiveFile();
         $(".fileActive").removeClass("fileActive");
     }
 
@@ -209,8 +205,8 @@ function displayFile(fileName){
 
     //Sets the appropriate fields to display the current file
     $("#file_name").html("Raw Data: <b>"+ fileName+"</br>");
-    $("#text_area").html(fileList[fileName][fileIndex.HTML]);
-    $("#tagged_data").html(fileList[fileName][fileIndex.JSON]);
+    $("#text_area").html(fileList[fileName]['html']);
+    $("#tagged_data").html(fileList[fileName]['json']);
 }
 
 //=====[ Loops through an array of files and adds each one to the dashboard  ]=====
@@ -239,7 +235,12 @@ function setupReader(file, display) {
         var text = e.target.result;
         //populates the fileList with a key:val where the key is the filename
         //and the val is [original_text,html_tagged_text,string_tagged_text,json]
-        fileList[name] = [text,text,text,''];
+        fileList[name] = {
+                            'original_text':text,
+                            'labeled_text':text,
+                            'html':text,
+                            'json':''
+                        };
 
         addFileButton(name);
         
@@ -268,7 +269,12 @@ $(document).ready(function(){
     var defaultText = $("#text_area").text();
     var defaultHTML = $("#text_area").html();
     var defaultFileName = "Default";
-    fileList[defaultFileName] = [defaultText,defaultText,defaultHTML,''];
+    fileList[defaultFileName] = {
+                                    'original_text':defaultText,
+                                    'labeled_text':defaultText,
+                                    'html':defaultHTML,
+                                    'json':''
+                                };
     addFileButton(defaultFileName);
     displayFile(defaultFileName);
    
@@ -323,6 +329,15 @@ $(document).ready(function(){
         } else if (e.which == 13 && $("#new_label_label").is(":focus")) {
             //Called when 'enter' is pressed. Adds new label.
             appendNewLabel();
+        } else if (e.which > 48 && e.which < 58){
+            //switches active label corresponding to numbers 1 - 9 
+            var key = e.which - 49;
+            if(labels[key]){
+                var label = labels[key];
+                $(".labelActive").removeClass("labelActive");
+                $("#"+label).addClass("labelActive");
+                $("#current_label").html("<span style=\"color:"+colors[label]+";\">"+label+"</span>");
+            }
         }
     });
 
@@ -353,7 +368,9 @@ $(document).ready(function(){
 
     //Prompts the user with the option to copy relevant json to clipboard
     $("#copy").on("click",function(){
-         window.prompt("Copy to clipboard: Ctrl+C, Enter", fileList);
+        saveActiveFile();
+        window.open('data:text;charset=utf-8,' + escape(JSON.stringify(fileList)));
+         // window.prompt("Copy to clipboard: Ctrl+C, Enter", JSON.stringify(fileList));
     });
 
 });
